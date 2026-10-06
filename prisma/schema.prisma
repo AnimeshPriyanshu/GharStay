@@ -1,0 +1,228 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  GUEST
+  HOST
+  ADMIN
+  LOCAL_PARTNER
+}
+
+enum PropertyType {
+  ENTIRE_HOME
+  PRIVATE_ROOM
+  SHARED_ROOM
+  GUEST_HOUSE
+  HOMESTAY
+}
+
+enum PropertyStatus {
+  ACTIVE
+  INACTIVE
+  PENDING_VERIFICATION
+  REJECTED
+  SUSPENDED
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  CHECKED_IN
+  CHECKED_OUT
+}
+
+enum EmergencyStatus {
+  OPEN
+  IN_PROGRESS
+  FULFILLED
+  CANCELLED
+  EXPIRED
+}
+
+enum EmergencyReason {
+  HOSPITAL
+  FAMILY_EMERGENCY
+  UNEXPECTED_TRAVEL
+  OTHER
+}
+
+enum StayPurpose {
+  TOURISM
+  HOSPITAL_VISIT
+  EMERGENCY
+  EXAM
+  WEDDING
+  PILGRIMAGE
+  BUSINESS
+  FAMILY_VISIT
+  OTHER
+}
+
+enum LocalPartnerStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+model User {
+  id            String            @id @default(cuid())
+  name          String
+  email         String            @unique
+  phone         String
+  passwordHash  String
+  role          UserRole          @default(GUEST)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  properties    Property[]
+  bookings      Booking[]         @relation("GuestBookings")
+  reviews       Review[]
+  localPartner  LocalPartner?
+  emergencyRequests EmergencyRequest[]
+
+  @@map("users")
+}
+
+model Property {
+  id                String            @id @default(cuid())
+  hostId            String
+  title             String
+  description       String
+  city              String
+  locality          String
+  address           String
+  latitude          Float?
+  longitude         Float?
+  pricePerNight     Int
+  propertyType      PropertyType      @default(PRIVATE_ROOM)
+  status            PropertyStatus    @default(PENDING_VERIFICATION)
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  host              User              @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  images            PropertyImage[]
+  amenities         PropertyAmenity[]
+  bookings          Booking[]
+  reviews           Review[]
+
+  @@index([city])
+  @@index([locality])
+  @@index([hostId])
+  @@index([status])
+  @@index([verificationStatus])
+  @@map("properties")
+}
+
+model PropertyImage {
+  id          String      @id @default(cuid())
+  propertyId  String
+  url         String
+  createdAt   DateTime    @default(now())
+
+  property    Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@map("property_images")
+}
+
+model Amenity {
+  id          String              @id @default(cuid())
+  name        String              @unique
+  properties  PropertyAmenity[]
+
+  @@map("amenities")
+}
+
+model PropertyAmenity {
+  propertyId  String
+  amenityId   String
+  property    Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  amenity     Amenity     @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@id([propertyId, amenityId])
+  @@map("property_amenities")
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  propertyId    String
+  guestId       String
+  checkIn       DateTime
+  checkOut      DateTime
+  guests        Int
+  totalAmount   Int
+  status        BookingStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  property      Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  guest         User          @relation("GuestBookings", fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@index([guestId])
+  @@index([status])
+  @@index([checkIn, checkOut])
+  @@map("bookings")
+}
+
+model Review {
+  id          String      @id @default(cuid())
+  propertyId  String
+  guestId     String
+  rating      Int
+  comment     String?
+  createdAt   DateTime    @default(now())
+
+  property    Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  guest       User        @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, guestId])
+  @@map("reviews")
+}
+
+model LocalPartner {
+  id        String              @id @default(cuid())
+  userId    String              @unique
+  area      String
+  status    LocalPartnerStatus  @default(PENDING)
+  createdAt DateTime            @default(now())
+
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("local_partners")
+}
+
+model EmergencyRequest {
+  id          String           @id @default(cuid())
+  guestId     String?
+  city        String
+  locality    String
+  purpose     EmergencyReason
+  description String?
+  status      EmergencyStatus  @default(OPEN)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  guest       User?            @relation(fields: [guestId], references: [id], onDelete: SetNull)
+
+  @@index([city])
+  @@index([locality])
+  @@index([status])
+  @@index([createdAt])
+  @@map("emergency_requests")
+}

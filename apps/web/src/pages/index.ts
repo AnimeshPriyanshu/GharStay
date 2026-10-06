@@ -1,0 +1,10 @@
+export { HomePage } from './Home/Home';
+export { SearchPage } from './Search/Search';
+export { PropertyPage } from './Property/Property';
+export { EmergencyPage } from './Emergency/Emergency';
+export { HostPage } from './Host/Host';
+export { GuestDashboard } from './GuestDashboard/GuestDashboard';
+export { HostDashboard } from './HostDashboard/HostDashboard';
+export { PartnerDashboard } from './PartnerDashboard/PartnerDashboard';
+export { LoginPage } from './Login/Login';
+export { RegisterPage } from './Register/Register';

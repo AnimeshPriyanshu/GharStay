@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-white text-neutral-900 font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-primary-800 text-white;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.primary.500');
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Never let the page scroll sideways */
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  img {
+    @apply max-w-full;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: theme('colors.neutral.100');
+  }
+  ::-webkit-scrollbar-thumb {
+    background: theme('colors.neutral.300');
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.neutral.400');
+  }
+}
+
+@layer components {
+  /* ---------- Layout primitives ---------- */
+  .container-gs {
+    @apply mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8;
+  }
+
+  .section {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  /* ---------- Typography ---------- */
+  .h1 {
+    @apply text-3xl sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1] font-extrabold tracking-tight text-neutral-900;
+  }
+
+  .h2 {
+    @apply text-[1.625rem] sm:text-3xl lg:text-4xl font-bold tracking-tight text-neutral-900;
+  }
+
+  .h3 {
+    @apply text-xl sm:text-2xl font-semibold tracking-tight text-neutral-900;
+  }
+
+  .lead {
+    @apply text-base sm:text-lg text-neutral-500 leading-relaxed;
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 focus-visible:ring-primary-500;
+  }
+
+  .btn-secondary {
+    @apply btn bg-white text-neutral-800 border border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300 focus-visible:ring-neutral-400;
+  }
+
+  .btn-outline {
+    @apply btn bg-white text-primary-600 border border-primary-500 hover:bg-primary-50 focus-visible:ring-primary-500;
+  }
+
+  .btn-ghost {
+    @apply btn text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-neutral-400;
+  }
+
+  .btn-terracotta {
+    @apply btn bg-terracotta-500 text-white hover:bg-terracotta-600 active:bg-terracotta-700 focus-visible:ring-terracotta-500;
+  }
+
+  .btn-sm {
+    @apply px-3.5 py-2 text-xs rounded-lg gap-1.5;
+  }
+  .btn-lg {
+    @apply px-6 py-3 text-base rounded-xl;
+  }
+
+  /* ---------- Form controls ---------- */
+  .input {
+    @apply w-full rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 transition-colors focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 disabled:bg-neutral-50;
+  }
+
+  .input-error {
+    @apply input border-terracotta-400 focus:border-terracotta-500 focus:ring-terracotta-500/20;
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-neutral-800;
+  }
+
+  /* ---------- Cards ---------- */
+  .card {
+    @apply rounded-2xl border border-neutral-200 bg-white;
+  }
+
+  .card-hover {
+    @apply card transition-all duration-200 hover:shadow-medium hover:-translate-y-0.5;
+  }
+
+  /* ---------- Badges ---------- */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+
+  .badge-verified {
+    @apply badge bg-primary-50 text-primary-700;
+  }
+
+  .badge-neutral {
+    @apply badge bg-neutral-100 text-neutral-600;
+  }
+
+  .badge-terracotta {
+    @apply badge bg-terracotta-50 text-terracotta-700;
+  }
+
+  .badge-amber {
+    @apply badge bg-amber-50 text-amber-700;
+  }
+
+  /* ---------- Section eyebrow ---------- */
+  .eyebrow {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary-600;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
